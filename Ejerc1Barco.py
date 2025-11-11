@@ -1,43 +1,46 @@
-import tkinter as tk
-from tkinter import ttk
-import pygame
+class Barco:
+    def __init__(self, nombre, posicionX, posicionY, velocidad, rumbo, numeroMunicion):
+        self.nombre = nombre
+        self.posicionX = posicionX
+        self.posicionY = posicionY
+        self.velocidad = velocidad  # entre 0 y 20 km/h
+        self.rumbo = rumbo          # entre 1 y 359 grados
+        self.numeroMunicion = numeroMunicion
 
-# Inicializar pygame para sonido
-pygame.mixer.init()
-pygame.mixer.music.load("fondo.mp3")  # música de fondo
-pygame.mixer.music.play(-1)           # loop infinito
-sonido_disparo = pygame.mixer.Sound("disparo.wav")
+    def __str__(self):
+        return (f"Barco {self.nombre}: Pos({self.posicionX},{self.posicionY}), "
+                f"Velocidad={self.velocidad} km/h, Rumbo={self.rumbo}°, "
+                f"Munición={self.numeroMunicion}")
 
-# Lista de barcos
-barcos = []
+    def disparar(self):
+        if self.numeroMunicion > 0:
+            self.numeroMunicion -= 1
+            print("💥 El barco ha disparado")
+        else:
+            print("⚠️ No queda munición")
 
-def crear_barco():
-    nombre = f"Barco{len(barcos)+1}"
-    nuevo = Barco(nombre, 50, 50, 5, 90, 3)
-    barcos.append(nuevo)
-    actualizar_selector()
+    def setVelocidad(self, nueva_velocidad):
+        if 0 <= nueva_velocidad <= 20:
+            self.velocidad = nueva_velocidad
+        else:
+            print("⚠️ Velocidad fuera de rango (0-20 km/h)")
 
-def actualizar_selector():
-    selector["values"] = [b.nombre for b in barcos]
+    def setRumbo(self, nuevo_rumbo):
+        if 1 <= nuevo_rumbo <= 359:
+            self.rumbo = nuevo_rumbo
+        else:
+            print("⚠️ Rumbo fuera de rango (1-359 grados)")
 
-def disparar():
-    seleccionado = selector.get()
-    for b in barcos:
-        if b.nombre == seleccionado:
-            b.disparar()
-            sonido_disparo.play()
 
-# Ventana principal
-root = tk.Tk()
-root.title("Batalla Naval")
+# Crear 3 barcos y probar métodos
+barco1 = Barco("Titanic", 0, 0, 10, 90, 5)
+barco2 = Barco("Bismarck", 5, 10, 15, 180, 3)
+barco3 = Barco("Yamato", -3, 7, 20, 270, 10)
 
-selector = ttk.Combobox(root, state="readonly")
-selector.pack()
-
-btn_crear = tk.Button(root, text="Crear Barco", command=crear_barco)
-btn_crear.pack()
-
-btn_disparar = tk.Button(root, text="Disparar", command=disparar)
-btn_disparar.pack()
-
-root.mainloop()
+for barco in [barco1, barco2, barco3]:
+    print(barco)
+    barco.disparar()
+    barco.setVelocidad(12)
+    barco.setRumbo(45)
+    print(barco)
+    print("-" * 40)
